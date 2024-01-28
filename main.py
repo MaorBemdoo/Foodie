@@ -1,13 +1,21 @@
 import tkinter as tk
-from ttkbootstrap.constants import *
 import ttkbootstrap as tb
+import time
 
-root = tb.Window(title="Foodie", themename="superhero", iconphoto="School Apps/Foodie/assets/food.ico")
-root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
+def show_loading_animation():
+    loading_window = tb.Toplevel(root)
+    loading_window.title("Loading")
 
-home = tb.Frame(root)
-about = tb.Frame(root)
+    progress_bar = tb.Progressbar(loading_window, mode='indeterminate')
+    progress_bar.pack(padx=10, pady=20)
 
+    progress_bar.start()
+
+    time.sleep(3)
+
+    progress_bar.stop()
+
+    loading_window.destroy()
 
 def toHome():
     about.forget()
@@ -18,6 +26,11 @@ def toAbout():
     home.forget()
     about.pack()
 
+root = tb.Window(title="Foodie", themename="superhero", iconphoto="School Apps/Foodie/assets/food.ico")
+root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
+
+home = tb.Frame(root)
+about = tb.Frame(root)
 
 home.pack()
 label = tb.Label(home, text="Home", font=(
@@ -33,5 +46,7 @@ label.pack()
 
 button = tb.Button(about, text="To Home", bootstyle="success", command=toHome)
 button.pack(pady=10)
+
+root.after(1000, show_loading_animation)
 
 root.mainloop()

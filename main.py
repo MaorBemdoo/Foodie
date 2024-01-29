@@ -22,23 +22,31 @@ def toHome():
     home.pack()
 
 
-def toAbout():
+def search():
     home.forget()
     about.pack()
 
-root = tb.Window(title="Foodie", themename="superhero", iconphoto="School Apps/Foodie/assets/food.ico")
+root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/food.ico")
 root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
+root.place_window_center()
 
 home = tb.Frame(root)
 about = tb.Frame(root)
 
 home.pack()
-label = tb.Label(home, text="Home", font=(
-    "Helvetica", 36), bootstyle="warning")
+image = tb.PhotoImage(file="School Apps/Foodie/assets/food.ico")
+label = tb.Label(home, image=image)
 label.pack()
 
-button = tb.Button(home, text="To About", bootstyle="success", command=toAbout)
-button.pack(pady=10)
+label2 = tb.Label(home, text="Search for a food to see details on how to prepare it", font=(
+    "Helvetica", 24), bootstyle="warning")
+label2.pack(pady=20)
+
+entry = tb.Entry(home, width=50, bootstyle="warning")
+entry.pack()
+
+button = tb.Button(home, text="Search", bootstyle="success", command=search)
+button.pack(pady=20)
 
 label = tb.Label(about, text="About", font=(
     "Helvetica", 36), bootstyle="warning")

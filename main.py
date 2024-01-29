@@ -69,7 +69,7 @@ def search():
         errorLabel.config(text="Error getting your foods. Please try again")
 
 
-root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/food.ico")
+root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/FOODIE.png")
 root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
 root.place_window_center()
 
@@ -78,7 +78,7 @@ foods = tb.Frame(root)
 
 # home page
 home.pack()
-image = tb.PhotoImage(file="School Apps/Foodie/assets/food.ico")
+image = tb.PhotoImage(file="School Apps/Foodie/assets/FOODIE.png")
 label = tb.Label(home, image=image)
 label.pack()
 

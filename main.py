@@ -43,10 +43,12 @@ def toHome():
 
 
 def search():
+    global button
+
+    button.config(default="disabled", text="Searching")
     food = entry.get()
     api_url = 'https://api.api-ninjas.com/v1/recipe?query={}'.format(food)
     response = requests.get(api_url, headers={'X-Api-Key': api_ninjas_api_key})
-    print(response.status_code, requests.codes)
     res = response.json()
     if res != [] and response.status_code == requests.codes.ok:
         for i, food in enumerate(res):
@@ -67,6 +69,7 @@ def search():
     else:
         print("Error:", response.status_code, response.text)
         errorLabel.config(text="Error getting your foods. Please try again")
+        button.config(default="active", text="Search")
 
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/FOODIE.png")
@@ -82,8 +85,8 @@ image = tb.PhotoImage(file="School Apps/Foodie/assets/FOODIE.png")
 label = tb.Label(home, image=image)
 label.pack()
 
-label2 = tb.Label(home, text="Search for a food to see details on how to prepare it", font=(
-    "Helvetica", 24), bootstyle="warning")
+label2 = tb.Label(home, text="What would you like to prepare today", font=(
+    "Helvetica", 20), bootstyle="light")
 label2.pack(pady=20)
 
 entry = tb.Entry(home, width=50, bootstyle="warning")
@@ -92,7 +95,7 @@ entry.pack()
 errorLabel = tb.Label(home, bootstyle="danger")
 errorLabel.pack()
 
-button = tb.Button(home, text="Search", bootstyle="success", command=search)
+button = tb.Button(home, text="Search", bootstyle="warning", command=search)
 button.pack(pady=20)
 
 # foods page

@@ -1,7 +1,11 @@
 import tkinter as tk
 import ttkbootstrap as tb
+from dotenv import dotenv_values
+import requests
 import time
 
+env_vars = dotenv_values('School Apps\Foodie\.env.local')
+api_key = env_vars.get("API_KEY")
 def show_loading_animation():
     loading_window = tb.Toplevel(root)
     loading_window.title("Loading")
@@ -23,8 +27,16 @@ def toHome():
 
 
 def search():
-    home.forget()
-    about.pack()
+    food = entry.get()
+    api_url = 'https://api.api-ninjas.com/v1/recipe?query={}'.format(food)
+    response = requests.get(api_url, headers={'X-Api-Key': api_key})
+    if response.status_code == requests.codes.ok:
+        print(response.text)
+        home.forget()
+        about.pack()
+    else:
+        print("Error:", response.status_code, response.text)
+        errorLabel.config(text="Error getting your foods. Please try again")
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/food.ico")
 root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
@@ -44,6 +56,9 @@ label2.pack(pady=20)
 
 entry = tb.Entry(home, width=50, bootstyle="warning")
 entry.pack()
+
+errorLabel = tb.Label(home, bootstyle="danger")
+errorLabel.pack(side="left")
 
 button = tb.Button(home, text="Search", bootstyle="success", command=search)
 button.pack(pady=20)

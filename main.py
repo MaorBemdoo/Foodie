@@ -123,7 +123,7 @@ async def search():
                             foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="secondary")
                             foodTitle.pack()
                             subFoodDescText = await getFoodDesc(food["title"])
-                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="warning", wraplength=300)
+                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="secondary", wraplength=300)
                             subFoodDesc.pack()
                             button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
                             button.pack(pady=10)

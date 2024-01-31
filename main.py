@@ -44,7 +44,7 @@ async def getFoodImg(search_query):
                                 if img_response.status == 200:
                                     img_bytes = await img_response.read()
                                     img = Image.open(BytesIO(img_bytes))
-                                    img = img.resize((round(root.winfo_screenwidth()/3) - 40, 350))
+                                    img = img.resize((round(root.winfo_screenwidth()/3) - 50, 350))
                                     return ImageTk.PhotoImage(img)
                                 else:
                                     print("Error downloading image:", img_response.status)
@@ -158,15 +158,18 @@ async def search():
                     else:
                         errorLabel.config(text="No results found")
                         button.config(text= "Search", state= "active")
+                        root.update_idletasks()
                 else:
                     print("Error:", response.status)
                     errorLabel.config(text="Error getting your foods. Please try again")
                     button.config(text= "Search", state= "active")
+                    root.update_idletasks()
         except Exception as e:
             print("Exception:", e)
             errorLabel.config(text="An error occurred while searching. Please try again.")
         finally:
             button.config(text="Search", state="active")
+            root.update_idletasks()
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))

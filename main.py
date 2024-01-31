@@ -32,23 +32,33 @@ async def getFoodImg(search_query):
             if response.status == 200:
                 try:
                     json_response = await response.json()
-                    photos = json_response.get('photos', [])
-                    if photos:
-                        randomPhotoIndex = randint(0, len(photos) - 1)
-                        randomPhotoUrl = photos[randomPhotoIndex]['src']['landscape']
-                        image_response = await session.get(randomPhotoUrl)
-                        image_data = await image_response.read()
-                        img = Image.open(BytesIO(image_data))
-                        img = img.resize((300, 300))
-                        return ImageTk.PhotoImage(image=img)
+                    if json_response and 'photos' in json_response:
+                        photos = json_response['photos']
+                        if photos:
+                            random_photo = randint(0, len(photos) - 1)
+                            photo_data = photos[random_photo]
+                            photo_url = photo_data['src']['landscape']
+                            async with session.get(photo_url) as img_response:
+                                if img_response.status == 200:
+                                    img_bytes = await img_response.read()
+                                    img = Image.open(BytesIO(img_bytes))
+                                    img = img.resize((round(root.winfo_screenwidth()/3) - 40, 350))
+                                    return ImageTk.PhotoImage(img)
+                                else:
+                                    print("Error downloading image:", img_response.status)
+                                    return None
+                        else:
+                            print("No photos found in the response")
+                            return None
                     else:
-                        return "No photos found"
+                        print("Invalid JSON response format")
+                        return None
                 except Exception as e:
                     print("Error parsing JSON:", e)
-                    return "Error parsing JSON"
+                    return None
             else:
                 print("Error:", response.status)
-                return "Error getting image"
+                return None
 
 async def getFoodDesc(search_query):
     language_code = 'en'
@@ -117,10 +127,11 @@ async def search():
                     res = await response.json()
                     if res:
                         for i, food in enumerate(res):
-                            foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light", padding=40)
+                            foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light")
                             foodImgRes = await getFoodImg(food["title"])
                             foodImg = tb.Label(foodFrame, image=foodImgRes)
                             foodImg.pack()
+                            foodImg.image = foodImgRes
                             foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="light, inverse")
                             foodTitle.pack()
                             subFoodDescText = await getFoodDesc(food["title"])

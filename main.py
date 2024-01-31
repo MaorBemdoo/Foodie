@@ -1,3 +1,4 @@
+import os
 from random import randint
 import ttkbootstrap as tb
 from dotenv import dotenv_values
@@ -7,7 +8,12 @@ import time
 import aiohttp
 import asyncio
 
-env_vars = dotenv_values('School Apps\Foodie\.env')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+icon_path = os.path.join(script_dir, "assets", "FOODIE.png")
+env_path = os.path.join(script_dir, ".env")
+
+env_vars = dotenv_values(env_path)
 api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 pexel_api_key = env_vars.get("PEXEL_API_KEY")
@@ -137,7 +143,7 @@ async def search():
         finally:
             button.config(text= "Search", default= "active")
 
-root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/FOODIE.png")
+root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
 root.geometry("600x800")
 root.place_window_center()
@@ -147,7 +153,7 @@ foods = tb.Frame(root)
 
 # home page
 home.pack()
-image = tb.PhotoImage(file="School Apps/Foodie/assets/FOODIE.png")
+image = tb.PhotoImage(file=icon_path)
 label = tb.Label(home, image=image)
 label.pack()
 

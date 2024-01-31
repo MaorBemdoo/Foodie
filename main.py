@@ -116,11 +116,11 @@ async def search():
                     res = await response.json()
                     if res:
                         for i, food in enumerate(res):
-                            foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light")
+                            foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light", padding=40)
                             foodImgRes = await getFoodImg(food["title"])
                             foodImg = tb.Label(foodFrame, image=foodImgRes)
                             foodImg.pack()
-                            foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="warning, inverse")
+                            foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="secondary")
                             foodTitle.pack()
                             subFoodDescText = await getFoodDesc(food["title"])
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="warning", wraplength=300)

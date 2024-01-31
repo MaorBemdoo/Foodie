@@ -1,8 +1,11 @@
 from cgitb import text
 from email.policy import default
+from random import randint
 import tkinter as tk
 import ttkbootstrap as tb
 from dotenv import dotenv_values
+from PIL import Image, ImageTk
+from io import BytesIO
 import requests
 import time
 import aiohttp
@@ -11,6 +14,38 @@ import asyncio
 env_vars = dotenv_values('School Apps\Foodie\.env')
 api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
+pexel_api_key = env_vars.get("PEXEL_API_KEY")
+
+async def getFoodImg(search_query):
+    headers = {
+        'Authorization': pexel_api_key,
+    }
+
+    url = 'https://api.pexels.com/v1/search/'
+    parameters = {'query': search_query}
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers, params=parameters) as response:
+            if response.status == 200:
+                try:
+                    json_response = await response.json()
+                    photos = json_response.get('photos', [])
+                    if photos:
+                        randomPhotoIndex = randint(0, len(photos) - 1)
+                        randomPhotoUrl = photos[randomPhotoIndex]['src']['landscape']
+                        image_response = await session.get(randomPhotoUrl)
+                        image_data = await image_response.read()
+                        img = Image.open(BytesIO(image_data))
+                        img = img.resize((300, 300))
+                        return ImageTk.PhotoImage(img)
+                    else:
+                        return "No photos found"
+                except Exception as e:
+                    print("Error parsing JSON:", e)
+                    return "Error parsing JSON"
+            else:
+                print("Error:", response.status)
+                return "Error getting image"
 
 async def getFoodDesc(search_query):
     language_code = 'en'
@@ -80,6 +115,9 @@ async def search():
                     if res:
                         for i, food in enumerate(res):
                             foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light")
+                            foodImgRes = await getFoodImg(food["title"])
+                            foodImg = tb.Label(foodFrame, image=foodImgRes)
+                            foodImg.pack()
                             foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="warning, inverse")
                             foodTitle.pack()
                             subFoodDescText = await getFoodDesc(food["title"])

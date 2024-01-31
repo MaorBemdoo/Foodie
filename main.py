@@ -17,6 +17,7 @@ env_vars = dotenv_values(env_path)
 api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 pexel_api_key = env_vars.get("PEXEL_API_KEY")
+email = env_vars.get("EMAIL")
 
 async def getFoodImg(search_query):
     headers = {
@@ -54,7 +55,7 @@ async def getFoodDesc(search_query):
     number_of_results = 1
     headers = {
         'Authorization': "Bearer {}".format(wikimedia_api_key),
-        'User-Agent': 'Foodie (bemdoo.maor1@gmail.com)'
+        'User-Agent': 'Foodie (' + email + ')'
     }
 
     base_url = 'https://api.wikimedia.org/core/v1/wikipedia/'

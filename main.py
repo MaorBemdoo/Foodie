@@ -1,12 +1,8 @@
-from cgitb import text
-from email.policy import default
 from random import randint
-import tkinter as tk
 import ttkbootstrap as tb
 from dotenv import dotenv_values
 from PIL import Image, ImageTk
 from io import BytesIO
-import requests
 import time
 import aiohttp
 import asyncio

@@ -1,3 +1,5 @@
+from cgitb import text
+from email.policy import default
 import tkinter as tk
 import ttkbootstrap as tb
 from dotenv import dotenv_values
@@ -10,20 +12,39 @@ env_vars = dotenv_values('School Apps\Foodie\.env')
 api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 
-def getFoodDesc(search_query):
+async def getFoodDesc(search_query):
     language_code = 'en'
     number_of_results = 1
     headers = {
-    'Authorization': "Bearer {}".format(wikimedia_api_key),
-    'User-Agent': 'Foodie (bemdoo.maor1@gmail.com)'
+        'Authorization': "Bearer {}".format(wikimedia_api_key),
+        'User-Agent': 'Foodie (bemdoo.maor1@gmail.com)'
     }
 
     base_url = 'https://api.wikimedia.org/core/v1/wikipedia/'
     endpoint = '/search/page'
     url = base_url + language_code + endpoint
     parameters = {'q': search_query, 'limit': number_of_results}
-    response = requests.get(url, headers=headers, params=parameters)
-    return response.json().pages[0].excerpt
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers, params=parameters) as response:
+            if response.status == 200:
+                try:
+                    json_response = await response.json()
+                    if json_response.get("pages"):
+                        first_page = json_response["pages"][0]
+                        if first_page.get("excerpt"):
+                            return first_page["excerpt"]
+                        else:
+                            return "No excerpt available"
+                    else:
+                        return "No pages found"
+                except Exception as e:
+                    print("Error parsing JSON:", e)
+                    return "Error parsing JSON"
+            else:
+                print("Error:", response.status)
+                return "Error getting food description"
+
 def show_loading_animation():
     loading_window = tb.Toplevel(root)
     loading_window.title("Loading")
@@ -45,6 +66,9 @@ def toHome():
 
 
 async def search():
+    global button
+
+    button.config(text= "Searching", default= "disabled")
     food = entry.get()
     api_url = 'https://api.api-ninjas.com/v1/recipe?query={}'.format(food)
 
@@ -58,8 +82,8 @@ async def search():
                             foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light")
                             foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="warning, inverse")
                             foodTitle.pack()
-                            subFoodDescText = getFoodDesc(food["title"])
-                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="warning")
+                            subFoodDescText = await getFoodDesc(food["title"])
+                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="warning", wraplength=300)
                             subFoodDesc.pack()
                             button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
                             button.pack(pady=10)
@@ -68,12 +92,16 @@ async def search():
                         foods.pack()
                     else:
                         errorLabel.config(text="No results found")
+                        button.config(text= "Search", default= "active")
                 else:
                     print("Error:", response.status)
                     errorLabel.config(text="Error getting your foods. Please try again")
+                    button.config(text= "Search", default= "active")
         except Exception as e:
             print("Exception:", e)
             errorLabel.config(text="An error occurred while searching. Please try again.")
+        finally:
+            button.config(text= "Search", default= "active")
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto="School Apps/Foodie/assets/FOODIE.png")
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))

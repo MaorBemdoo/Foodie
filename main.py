@@ -39,7 +39,7 @@ async def getFoodImg(search_query):
                         image_data = await image_response.read()
                         img = Image.open(BytesIO(image_data))
                         img = img.resize((300, 300))
-                        return ImageTk.PhotoImage(img)
+                        return ImageTk.PhotoImage(image=img)
                     else:
                         return "No photos found"
                 except Exception as e:
@@ -105,7 +105,7 @@ def toHome():
 async def search():
     global button
 
-    button.config(text= "Searching", default= "disabled")
+    button.config(text="Searching", default="disabled")
     food = entry.get()
     api_url = 'https://api.api-ninjas.com/v1/recipe?query={}'.format(food)
 
@@ -129,6 +129,7 @@ async def search():
                             button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=i//3, column=i%3, sticky="nsew")
                         home.forget()
+                        root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
                         foods.pack()
                     else:
                         errorLabel.config(text="No results found")
@@ -141,7 +142,7 @@ async def search():
             print("Exception:", e)
             errorLabel.config(text="An error occurred while searching. Please try again.")
         finally:
-            button.config(text= "Search", default= "active")
+            button.config(text="Search", default="active")
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))

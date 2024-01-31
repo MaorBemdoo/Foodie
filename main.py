@@ -4,6 +4,8 @@ import ttkbootstrap as tb
 from dotenv import dotenv_values
 from PIL import Image, ImageTk
 from io import BytesIO
+from bs4 import BeautifulSoup
+from googletrans import Translator
 import time
 import aiohttp
 import asyncio
@@ -81,7 +83,15 @@ async def getFoodDesc(search_query):
                     if json_response.get("pages"):
                         first_page = json_response["pages"][0]
                         if first_page.get("excerpt"):
-                            return first_page["excerpt"]
+                            try:
+                                soup = BeautifulSoup(first_page["excerpt"], 'html.parser')
+                                soupText = soup.get_text()
+                                translator = Translator()
+                                translated_text = translator.translate(soupText, src='auto', dest='en').text
+                                return translated_text
+                            except Exception as e:
+                                print("Error:", e)
+                                return None
                         else:
                             return "No excerpt available"
                     else:
@@ -116,7 +126,8 @@ def toHome():
 async def search():
     global button
 
-    button.config(text="Searching", default="disabled")
+    button.config(text="Searching", state="disabled")
+    root.update_idletasks()
     food = entry.get()
     api_url = 'https://api.api-ninjas.com/v1/recipe?query={}'.format(food)
 
@@ -135,26 +146,27 @@ async def search():
                             foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="light, inverse")
                             foodTitle.pack()
                             subFoodDescText = await getFoodDesc(food["title"])
+                            subFoodDescText = subFoodDescText[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
                             button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
                             button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=i//3, column=i%3, sticky="nsew")
                         home.forget()
-                        root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
+                        root.state('zoomed')
                         foods.pack()
                     else:
                         errorLabel.config(text="No results found")
-                        button.config(text= "Search", default= "active")
+                        button.config(text= "Search", state= "active")
                 else:
                     print("Error:", response.status)
                     errorLabel.config(text="Error getting your foods. Please try again")
-                    button.config(text= "Search", default= "active")
+                    button.config(text= "Search", state= "active")
         except Exception as e:
             print("Exception:", e)
             errorLabel.config(text="An error occurred while searching. Please try again.")
         finally:
-            button.config(text="Search", default="active")
+            button.config(text="Search", state="active")
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))

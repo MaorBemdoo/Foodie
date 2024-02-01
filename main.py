@@ -23,6 +23,8 @@ pexel_api_key = env_vars.get("PEXEL_API_KEY")
 email = env_vars.get("EMAIL")
 
 async def getFoodImg(search_query):
+    global button
+
     headers = {
         'Authorization': pexel_api_key,
     }
@@ -57,6 +59,8 @@ async def getFoodImg(search_query):
                         print("Invalid JSON response format")
                         return None
                 except Exception as e:
+                    button.config(text= "Search", state= "active")
+                    root.update_idletasks()
                     print("Error parsing JSON:", e)
                     return None
             else:
@@ -64,6 +68,8 @@ async def getFoodImg(search_query):
                 return None
 
 async def getFoodDesc(search_query):
+    global button
+
     language_code = 'en'
     number_of_results = 1
     headers = {
@@ -98,6 +104,8 @@ async def getFoodDesc(search_query):
                     else:
                         return "No pages found"
                 except Exception as e:
+                    button.config(text= "Search", state= "active")
+                    root.update_idletasks()
                     print("Error parsing JSON:", e)
                     return "Error parsing JSON"
             else:
@@ -139,6 +147,8 @@ async def search():
                 if response.status == 200:
                     res = await response.json()
                     if res:
+                        foodSearch = tb.Label(foods, text="Search results for " + food + " ...", font=("Helvetica", 24), bootstyle="light")
+                        foodSearch.grid(row=1, column=0, columnspan=root.winfo_screenwidth())
                         for i, food in enumerate(res):
                             foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgRes = await getFoodImg(food["title"])
@@ -153,7 +163,7 @@ async def search():
                             subFoodDesc.pack()
                             button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
                             button.pack(pady=10)
-                            foodFrame.grid(padx=10, pady=10, row=i//3, column=i%3, sticky="nsew")
+                            foodFrame.grid(padx=10, pady=10, row=(i//3) + 5, column=(i%3), sticky="nsew")
                         home.forget()
                         root.state('zoomed')
                         foods_canvas.pack(side="left", fill="both", expand=True)

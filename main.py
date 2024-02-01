@@ -130,11 +130,13 @@ def show_loading_animation():
 def toHome():
     foods_canvas.forget()
     scrollbar.forget()
+    root.geometry("600x800")
+    root.update_idletasks()
     home.pack()
 
 
 async def search():
-    global button
+    global button, toHome
 
     button.config(text="Searching", state="disabled")
     root.update_idletasks()
@@ -148,7 +150,9 @@ async def search():
                     res = await response.json()
                     if res:
                         foodSearch = tb.Label(foods, text="Search results for " + food + " ...", font=("Helvetica", 24), bootstyle="light")
-                        foodSearch.grid(row=1, column=0, columnspan=root.winfo_screenwidth())
+                        foodSearch.grid(row=1, column=0, columnspan=3)
+                        toHomeBtn = tb.Button(foods, text="To Home", bootstyle="success", command=toHome)
+                        toHomeBtn.grid(row=1, column=2)
                         for i, food in enumerate(res):
                             foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgRes = await getFoodImg(food["title"])
@@ -161,8 +165,8 @@ async def search():
                             subFoodDescText = subFoodDescText[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
-                            button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
-                            button.pack(pady=10)
+                            # button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
+                            # button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=(i//3) + 5, column=(i%3), sticky="nsew")
                         home.forget()
                         root.state('zoomed')

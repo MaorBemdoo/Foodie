@@ -1,5 +1,6 @@
 import os
 from random import randint
+from tkinter import ttk
 import ttkbootstrap as tb
 from dotenv import dotenv_values
 from PIL import Image, ImageTk
@@ -119,7 +120,8 @@ def show_loading_animation():
     loading_window.destroy()
 
 def toHome():
-    foods.forget()
+    foods_canvas.forget()
+    scrollbar.forget()
     home.pack()
 
 
@@ -138,7 +140,7 @@ async def search():
                     res = await response.json()
                     if res:
                         for i, food in enumerate(res):
-                            foodFrame = tb.Frame(foods, width=300, height=300, bootstyle="light")
+                            foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgRes = await getFoodImg(food["title"])
                             foodImg = tb.Label(foodFrame, image=foodImgRes)
                             foodImg.pack()
@@ -154,7 +156,8 @@ async def search():
                             foodFrame.grid(padx=10, pady=10, row=i//3, column=i%3, sticky="nsew")
                         home.forget()
                         root.state('zoomed')
-                        foods.pack()
+                        foods_canvas.pack(side="left", fill="both", expand=True)
+                        scrollbar.pack(side="right", fill="y")
                     else:
                         errorLabel.config(text="No results found")
                         button.config(text= "Search", state= "active")
@@ -177,7 +180,17 @@ root.geometry("600x800")
 root.place_window_center()
 
 home = tb.Frame(root)
-foods = tb.Frame(root)
+foods_canvas = tb.Canvas(root)
+
+scrollbar = ttk.Scrollbar(root, orient="vertical", command=foods_canvas.yview)
+
+foods_canvas.configure(yscrollcommand=scrollbar.set)
+
+foods = tb.Frame(foods_canvas)
+foods_canvas.create_window((0, 0), window=foods, anchor="nw")
+
+def update_scroll_region(event):
+    foods_canvas.configure(scrollregion=foods_canvas.bbox("all"))
 
 # home page
 home.pack()
@@ -208,5 +221,7 @@ button.pack(pady=20)
 # button.pack(pady=10)
 
 root.after(1000, show_loading_animation)
+
+foods.bind("<Configure>", update_scroll_region)
 
 root.mainloop()

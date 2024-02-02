@@ -180,7 +180,7 @@ async def search():
                     root.update_idletasks()
         except Exception as e:
             print("Exception:", e)
-            errorLabel.config(text="An error occurred while searching. Please try again.")
+            errorLabel.config(text="We are experiencing some challenges getting your recipe. Please try again.")
         finally:
             button.config(text="Search", state="active")
             root.update_idletasks()

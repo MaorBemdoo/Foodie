@@ -110,7 +110,6 @@ async def getfooddesc(search_query):
             else:
                 print("Error:", response.status)
                 return "Error getting food description"
-
 def show_loading_animation():
     loading_window = tb.Toplevel('root')
     loading_window.title("Loading")
@@ -125,7 +124,6 @@ def show_loading_animation():
     progress_bar.stop()
 
     loading_window.destroy()
-
 def tohome():
     foods_canvas.forget()
     scrollbar.forget()

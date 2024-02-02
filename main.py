@@ -64,7 +64,7 @@ async def getFoodImg(search_query):
                     print("Error parsing JSON:", e)
                     return None
             else:
-                print("Error:", response.status)
+                print("Not found:", response.status)
                 return None
 
 async def getFoodDesc(search_query):
@@ -97,7 +97,7 @@ async def getFoodDesc(search_query):
                                 translated_text = translator.translate(soupText, src='auto', dest='en').text
                                 return translated_text
                             except Exception as e:
-                                print("Error:", e)
+                                print("Not Found:", e)
                                 return None
                         else:
                             return "No excerpt available"
@@ -178,7 +178,7 @@ async def search():
                         root.update_idletasks()
                 else:
                     print("Error:", response.status)
-                    errorLabel.config(text="Error getting your foods. Please try again")
+                    errorLabel.config(text="Error getting your food now. Please try again later")
                     button.config(text= "Search", state= "active")
                     root.update_idletasks()
         except Exception as e:

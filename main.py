@@ -190,7 +190,7 @@ async def search():
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
-root.geometry("600x800")
+root.geometry("800x800")
 root.place_window_center()
 
 home = tb.Frame(root)

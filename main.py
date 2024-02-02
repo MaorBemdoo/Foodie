@@ -21,7 +21,6 @@ api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 pexel_api_key = env_vars.get("PEXEL_API_KEY")
 email = env_vars.get("EMAIL")
-
 async def getFoodImg(search_query):
     global button
 
@@ -113,7 +112,7 @@ async def getFoodDesc(search_query):
                 return "Error getting food description"
 
 def show_loading_animation():
-    loading_window = tb.Toplevel(root)
+    loading_window = tb.Toplevel('root')
     loading_window.title("Loading")
 
     progress_bar = tb.Progressbar(loading_window, mode='indeterminate')
@@ -149,7 +148,7 @@ async def search():
                 if response.status == 200:
                     res = await response.json()
                     if res:
-                        foodSearch = tb.Label(foods, text="Search results for " + food + " ...", font=("Helvetica", 24), bootstyle="light")
+                        foodSearch = tb.Label(foods, text="Search results for " + food + " ...", font=("Times New Roman", 25), bootstyle="light")
                         foodSearch.grid(row=1, column=0, columnspan=3)
                         toHomeBtn = tb.Button(foods, text="To Home", bootstyle="success", command=toHome)
                         toHomeBtn.grid(row=1, column=2)

@@ -231,7 +231,7 @@ button.pack(pady=20)
 #     "Helvetica", 36), bootstyle="warning")
 # foodTitle.pack()
 
-# button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
+# button = tb.Button(foodFrame, text="Go Back", bootstyle="success", command=toHome)
 # button.pack(pady=10)
 
 root.after(1000, show_loading_animation)

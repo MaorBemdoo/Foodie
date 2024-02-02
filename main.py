@@ -222,7 +222,7 @@ entry.pack()
 errorLabel = tb.Label(home, bootstyle="danger")
 errorLabel.pack()
 
-button = tb.Button(home, text="Search", bootstyle="warning", padding=(40, 20), command=lambda: asyncio.run(search()))
+button = tb.Button(home, text="Search", bootstyle="warning", padding=(40, 10), command=lambda: asyncio.run(search()))
 button.pack(pady=20)
 
 # foods page

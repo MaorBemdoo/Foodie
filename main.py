@@ -49,10 +49,10 @@ async def getfoodimg(search_query):
                                     img = img.resize((round(root.winfo_screenwidth()/3) - 50, 350))
                                     return ImageTk.PhotoImage(img)
                                 else:
-                                    print("Error downloading image:", img_response.status)
+                                    print("Error downloading Photo:", img_response.status)
                                     return None
                         else:
-                            print("No photos found in the response")
+                            print("No Pictures found in the response")
                             return None
                     else:
                         print("Invalid JSON response format")

@@ -21,7 +21,7 @@ api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 pexel_api_key = env_vars.get("PEXEL_API_KEY")
 email = env_vars.get("EMAIL")
-async def getFoodImg(search_query):
+async def getfoodimg(search_query):
     global button
 
     headers = {
@@ -66,7 +66,7 @@ async def getFoodImg(search_query):
                 print("Not found:", response.status)
                 return None
 
-async def getFoodDesc(search_query):
+async def getfooddesc(search_query):
     global button
 
     language_code = 'en'
@@ -126,7 +126,7 @@ def show_loading_animation():
 
     loading_window.destroy()
 
-def toHome():
+def tohome():
     foods_canvas.forget()
     scrollbar.forget()
     root.geometry("600x800")

@@ -152,13 +152,13 @@ async def search():
                         toHomeBtn.grid(row=1, column=2)
                         for i, food in enumerate(res):
                             foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
-                            foodImgRes = await getFoodImg(food["title"])
+                            foodImgRes = await getfoodimg(food["title"])
                             foodImg = tb.Label(foodFrame, image=foodImgRes)
                             foodImg.pack()
                             foodImg.image = foodImgRes
                             foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="light, inverse")
                             foodTitle.pack()
-                            subFoodDescText = await getFoodDesc(food["title"])
+                            subFoodDescText = await getfooddesc(food["title"])
                             subFoodDescText = subFoodDescText[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()

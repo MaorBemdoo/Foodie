@@ -58,7 +58,7 @@ async def getfoodimg(search_query):
                         print("Invalid JSON response format")
                         return None
                 except Exception as e:
-                    button.config(text= "Search", state= "active")
+                    button.config(text="Search", state="active")
                     root.update_idletasks()
                     print("Error parsing JSON:", e)
                     return None
@@ -103,7 +103,7 @@ async def getfooddesc(search_query):
                     else:
                         return "No pages found"
                 except Exception as e:
-                    button.config(text= "Search", state= "active")
+                    button.config(text="Search", state="active")
                     root.update_idletasks()
                     print("Error parsing JSON:", e)
                     return "Error parsing JSON"
@@ -171,12 +171,12 @@ async def search():
                         scrollbar.pack(side="right", fill="y")
                     else:
                         errorLabel.config(text="No results found")
-                        button.config(text= "Search", state= "active")
+                        button.config(text="Search", state="active")
                         root.update_idletasks()
                 else:
                     print("Error:", response.status)
                     errorLabel.config(text="Error getting your food now. Please try again later")
-                    button.config(text= "Search", state= "active")
+                    button.config(text="Search", state="active")
                     root.update_idletasks()
         except Exception as e:
             print("Exception:", e)

@@ -100,7 +100,7 @@ async def getFoodDesc(search_query):
                                 print("Error:", e)
                                 return None
                         else:
-                            return "No excerpt available"
+                            return "No except available"
                     else:
                         return "No pages found"
                 except Exception as e:

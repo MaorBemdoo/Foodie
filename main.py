@@ -26,6 +26,7 @@ foodNameVar = ""
 foodImgVar = ""
 foodDescVar = ""
 foodIngredientsVar = []
+foodInstructionsVar = []
 
 async def getFoodImg(search_query):
     global button, foodImgVar
@@ -105,7 +106,7 @@ async def getFoodDesc(search_query):
                                 print("Not Found:", e)
                                 return None
                         else:
-                            return "No excerpt available"
+                            return "No except available"
                     else:
                         return "No pages found"
                 except Exception as e:
@@ -137,21 +138,26 @@ def toHome():
     root.update_idletasks()
     home.pack()
 
-def seeMore(foodImgVar, foodDescVar, foodNameVar, foodIngredientsVar):
+def seeMore(foodImgVar, foodDescVar, foodNameVar, foodIngredientsVar, foodInstructionsVar):
     global foodImg, foodDesc, foodTitle
     foods_canvas.forget()
     scrollbar.forget()
-    foodPage.pack()
+    foodPage_canvas.pack(side="left", fill="both", expand=True)
+    foodPageScrollbar.pack(side="right", fill="y")
     foodImg.config(image=foodImgVar)
     foodTitle.config(text=foodNameVar)
     foodDesc.config(text=foodDescVar)
     for i, ingredient in enumerate(foodIngredientsVar, start=1):
         foodingredients = tb.Label(ingredientFrame, text=f"{i}. {ingredient}", justify="left", wraplength=400)
         foodingredients.pack(anchor="w", padx=10, pady=5)
+    instructionLabel.pack()
+    for i, instruction in enumerate(foodInstructionsVar, start=1):
+        foodInstruction = tb.Label(instructionFrame, text=f"Step {i}: {instruction}", justify="left", wraplength=400)
+        foodInstruction.pack(anchor="w", padx=10, pady=5)
 
 
 async def search():
-    global button, toHome, foodImgVar, foodDescVar, foodNameVar
+    global button, toHome, foodImgVar, foodDescVar, foodNameVar, foodIngredientsVar, foodInstructionsVar
 
     button.config(text="Searching", state="disabled")
     root.update_idletasks()
@@ -171,6 +177,7 @@ async def search():
                         for i, food in enumerate(res):
                             foodNameVar = food["title"]
                             foodIngredientsVar = food["ingredients"].split("|")
+                            foodInstructionsVar = food["instructions"].split(".")
                             foodFrame = tb.Frame(foods, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgVar = await getFoodImg(foodNameVar)
                             foodImg = tb.Label(foodFrame, image=foodImgVar)
@@ -182,7 +189,7 @@ async def search():
                             subFoodDescVar = foodDescVar[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescVar, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
-                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=lambda img=foodImgVar, desc=foodDescVar, name=foodNameVar, ingredients=foodIngredientsVar: seeMore(img, desc, name, ingredients))
+                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=lambda img=foodImgVar, desc=foodDescVar, name=foodNameVar, ingredients=foodIngredientsVar, instructions=foodInstructionsVar: seeMore(img, desc, name, ingredients, instructions))
                             button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=(i//3) + 5, column=(i%3), sticky="nsew")
                         home.forget()
@@ -212,17 +219,24 @@ root.place_window_center()
 
 home = tb.Frame(root)
 foods_canvas = tb.Canvas(root)
-foodPage = tb.Frame(root)
+foodPage_canvas = tb.Canvas(root)
 
 scrollbar = ttk.Scrollbar(root, orient="vertical", command=foods_canvas.yview)
+foodPageScrollbar = ttk.Scrollbar(root, orient="vertical", command=foodPage_canvas.yview)
 
 foods_canvas.configure(yscrollcommand=scrollbar.set)
+foodPage_canvas.configure(yscrollcommand=foodPageScrollbar.set)
 
 foods = tb.Frame(foods_canvas)
+foodPage = tb.Frame(foodPage_canvas)
 foods_canvas.create_window((0, 0), window=foods, anchor="nw")
+foodPage_canvas.create_window((0, 0), window=foodPage, anchor="nw")
 
 def update_scroll_region(event):
     foods_canvas.configure(scrollregion=foods_canvas.bbox("all"))
+
+def update_foodScroll_region(event):
+    foodPage_canvas.configure(scrollregion=foodPage_canvas.bbox("all"))
 
 # home page
 home.pack()
@@ -255,9 +269,13 @@ ingredientFrame = tb.Frame(foodPage)
 ingredientLabel = tb.Label(ingredientFrame, text="Ingredients", font=("Cascadia Code SemiBold", 18))
 ingredientLabel.pack()
 ingredientFrame.pack()
+instructionFrame = tb.Label(foodPage)
+instructionLabel = tb.Label(ingredientFrame, text="Instructions", font=("Cascadia Code SemiBold", 18))
+instructionFrame.pack()
 
 root.after(1000, show_loading_animation)
 
 foods.bind("<Configure>", update_scroll_region)
+foodPage.bind("<Configure>", update_foodScroll_region)
 
 root.mainloop()

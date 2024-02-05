@@ -53,7 +53,7 @@ async def getFoodImg(search_query):
                                     img_bytes = await img_response.read()
                                     img = Image.open(BytesIO(img_bytes))
                                     img = img.resize((round(root.winfo_screenwidth()/3) - 50, 350))
-                                    foodImgVar = ImageTk.PhotoImage(img)
+                                    return ImageTk.PhotoImage(img)
                                 else:
                                     print("Error downloading Photo:", img_response.status)
                                     return None
@@ -62,12 +62,12 @@ async def getFoodImg(search_query):
                             return None
                     else:
                         print("Invalid JSON response format")
-                        foodImgVar = None
+                        return None
                 except Exception as e:
                     button.config(text="Search", state="active")
                     root.update_idletasks()
                     print("Error parsing JSON:", e)
-                    foodImgVar = None
+                    return None
             else:
                 print("Not found:", response.status)
                 return None
@@ -100,7 +100,7 @@ async def getFoodDesc(search_query):
                                 soupText = soup.get_text()
                                 translator = Translator()
                                 translated_text = translator.translate(soupText, src='auto', dest='en').text
-                                foodDescVar = translated_text
+                                return translated_text
                             except Exception as e:
                                 print("Not Found:", e)
                                 return None
@@ -138,9 +138,13 @@ def toHome():
     home.pack()
 
 def seeMore():
+    global foodImg, foodDesc, foodTitle, foodImgVar, foodNameVar, foodDescVar
     foods_canvas.forget()
     scrollbar.forget()
     foodPage.pack()
+    foodImg.config(image=foodImgVar, width=round(root.winfo_screenwidth()/3) - 50)
+    foodTitle.config(text=foodNameVar)
+    foodDesc.config(text=foodDescVar)
 
 
 async def search():
@@ -164,13 +168,13 @@ async def search():
                         for i, food in enumerate(res):
                             foodNameVar = food["title"]
                             foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
-                            await getFoodImg(foodNameVar)
+                            foodImgVar = await getFoodImg(foodNameVar)
                             foodImg = tb.Label(foodFrame, image=foodImgVar)
                             foodImg.pack()
                             foodImg.image = foodImgVar
                             foodTitle = tb.Label(foodFrame, text=foodNameVar, font=("Helvetica", 20), bootstyle="light, inverse")
                             foodTitle.pack()
-                            await getFoodDesc(foodNameVar)
+                            foodDescVar = await getFoodDesc(foodNameVar)
                             subFoodDescVar = foodDescVar[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescVar, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
@@ -199,7 +203,7 @@ async def search():
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
-root.geometry("800x800")
+root.geometry("600x800")
 root.place_window_center()
 
 home = tb.Frame(root)
@@ -237,11 +241,11 @@ button = tb.Button(home, text="Search", bootstyle="warning", padding=(40, 10), c
 button.pack(pady=20)
 
 # food page
-foodImg = tb.Label(foodPage, image=foodImgVar)
+foodImg = tb.Label(foodPage)
 foodImg.pack()
-foodTitle = tb.Label(foodPage, text=foodNameVar, foreground="white", font=("Helvetica", 24))
+foodTitle = tb.Label(foodPage, foreground="white", font=("Helvetica", 24))
 foodTitle.pack()
-foodDesc = tb.Label(foodPage, text=foodDescVar, foreground="white")
+foodDesc = tb.Label(foodPage, foreground="white")
 foodDesc.pack()
 
 root.after(1000, show_loading_animation)

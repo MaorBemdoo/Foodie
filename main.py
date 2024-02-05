@@ -22,8 +22,13 @@ wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 pexel_api_key = env_vars.get("PEXEL_API_KEY")
 email = env_vars.get("EMAIL")
 
+foodNameVar = ""
+foodImgVar = ""
+foodDescVar = ""
+foodStepsVar = ""
+
 async def getFoodImg(search_query):
-    global button
+    global button, foodImgVar
 
     headers = {
         'Authorization': pexel_api_key,
@@ -48,27 +53,27 @@ async def getFoodImg(search_query):
                                     img_bytes = await img_response.read()
                                     img = Image.open(BytesIO(img_bytes))
                                     img = img.resize((round(root.winfo_screenwidth()/3) - 50, 350))
-                                    return ImageTk.PhotoImage(img)
+                                    foodImgVar = ImageTk.PhotoImage(img)
                                 else:
-                                    print("Error downloading image:", img_response.status)
+                                    print("Error downloading Photo:", img_response.status)
                                     return None
                         else:
-                            print("No photos found in the response")
+                            print("No Pictures found in the response")
                             return None
                     else:
                         print("Invalid JSON response format")
-                        return None
+                        foodImgVar = None
                 except Exception as e:
-                    button.config(text= "Search", state= "active")
+                    button.config(text="Search", state="active")
                     root.update_idletasks()
                     print("Error parsing JSON:", e)
-                    return None
+                    foodImgVar = None
             else:
-                print("Error:", response.status)
+                print("Not found:", response.status)
                 return None
 
 async def getFoodDesc(search_query):
-    global button
+    global button, foodDescVar
 
     language_code = 'en'
     number_of_results = 1
@@ -95,25 +100,24 @@ async def getFoodDesc(search_query):
                                 soupText = soup.get_text()
                                 translator = Translator()
                                 translated_text = translator.translate(soupText, src='auto', dest='en').text
-                                return translated_text
+                                foodDescVar = translated_text
                             except Exception as e:
-                                print("Error:", e)
+                                print("Not Found:", e)
                                 return None
                         else:
                             return "No except available"
                     else:
                         return "No pages found"
                 except Exception as e:
-                    button.config(text= "Search", state= "active")
+                    button.config(text="Search", state="active")
                     root.update_idletasks()
                     print("Error parsing JSON:", e)
-                    return "Error parsing JSON"
+                    foodDescVar = "Error parsing JSON"
             else:
                 print("Error:", response.status)
                 return "Error getting food description"
-
 def show_loading_animation():
-    loading_window = tb.Toplevel(root)
+    loading_window = tb.Toplevel('root')
     loading_window.title("Loading")
 
     progress_bar = tb.Progressbar(loading_window, mode='indeterminate')
@@ -126,15 +130,21 @@ def show_loading_animation():
     progress_bar.stop()
 
     loading_window.destroy()
-
 def toHome():
     foods_canvas.forget()
     scrollbar.forget()
+    root.geometry("600x800")
+    root.update_idletasks()
     home.pack()
+
+def seeMore():
+    foods_canvas.forget()
+    scrollbar.forget()
+    foodPage.pack()
 
 
 async def search():
-    global button
+    global button, toHome, foodImgVar, foodDescVar, foodNameVar
 
     button.config(text="Searching", state="disabled")
     root.update_idletasks()
@@ -147,21 +157,24 @@ async def search():
                 if response.status == 200:
                     res = await response.json()
                     if res:
-                        foodSearch = tb.Label(foods, text="Search results for " + food + " ...", font=("Helvetica", 24), bootstyle="light")
-                        foodSearch.grid(row=1, column=0, columnspan=root.winfo_screenwidth())
+                        foodSearch = tb.Label(foods, text="Search results for " + food + " ...", font=("Times New Roman", 25), bootstyle="light")
+                        foodSearch.grid(row=1, column=0, columnspan=3)
+                        toHomeBtn = tb.Button(foods, text="To Home", bootstyle="success", command=toHome)
+                        toHomeBtn.grid(row=1, column=2)
                         for i, food in enumerate(res):
+                            foodNameVar = food["title"]
                             foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
-                            foodImgRes = await getFoodImg(food["title"])
-                            foodImg = tb.Label(foodFrame, image=foodImgRes)
+                            await getFoodImg(foodNameVar)
+                            foodImg = tb.Label(foodFrame, image=foodImgVar)
                             foodImg.pack()
-                            foodImg.image = foodImgRes
-                            foodTitle = tb.Label(foodFrame, text=food["title"], font=("Helvetica", 20), bootstyle="light, inverse")
+                            foodImg.image = foodImgVar
+                            foodTitle = tb.Label(foodFrame, text=foodNameVar, font=("Helvetica", 20), bootstyle="light, inverse")
                             foodTitle.pack()
-                            subFoodDescText = await getFoodDesc(food["title"])
-                            subFoodDescText = subFoodDescText[:42] + "..."
-                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
+                            await getFoodDesc(foodNameVar)
+                            subFoodDescVar = foodDescVar[:42] + "..."
+                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescVar, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
-                            button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
+                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=seeMore)
                             button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=(i//3) + 5, column=(i%3), sticky="nsew")
                         home.forget()
@@ -170,27 +183,28 @@ async def search():
                         scrollbar.pack(side="right", fill="y")
                     else:
                         errorLabel.config(text="No results found")
-                        button.config(text= "Search", state= "active")
+                        button.config(text="Search", state="active")
                         root.update_idletasks()
                 else:
                     print("Error:", response.status)
-                    errorLabel.config(text="Error getting your foods. Please try again")
-                    button.config(text= "Search", state= "active")
+                    errorLabel.config(text="Error getting your food now. Please try again later")
+                    button.config(text="Search", state="active")
                     root.update_idletasks()
         except Exception as e:
             print("Exception:", e)
-            errorLabel.config(text="An error occurred while searching. Please try again.")
+            errorLabel.config(text="We are experiencing some challenges getting your recipe. Please try again.")
         finally:
             button.config(text="Search", state="active")
             root.update_idletasks()
 
 root = tb.Window(title="Foodie", themename="darkly", iconphoto=icon_path)
 # root.geometry("%dx%d" % (root.winfo_screenwidth(), root.winfo_screenheight()))
-root.geometry("600x800")
+root.geometry("800x800")
 root.place_window_center()
 
 home = tb.Frame(root)
 foods_canvas = tb.Canvas(root)
+foodPage = tb.Frame(root)
 
 scrollbar = ttk.Scrollbar(root, orient="vertical", command=foods_canvas.yview)
 
@@ -218,17 +232,17 @@ entry.pack()
 errorLabel = tb.Label(home, bootstyle="danger")
 errorLabel.pack()
 
-button = tb.Button(home, text="Search", bootstyle="warning", padding=(40, 20), command=lambda: asyncio.run(search()))
+
+button = tb.Button(home, text="Search", bootstyle="warning", padding=(40, 10), command=lambda: asyncio.run(search()))
 button.pack(pady=20)
 
-# foods page
-# foodFrame = tb.Frame(foods, width=300, height=300)
-# foodTitle = tb.Label(foodFrame, font=(
-#     "Helvetica", 36), bootstyle="warning")
-# foodTitle.pack()
-
-# button = tb.Button(foodFrame, text="To Home", bootstyle="success", command=toHome)
-# button.pack(pady=10)
+# food page
+foodImg = tb.Label(foodPage, image=foodImgVar)
+foodImg.pack()
+foodTitle = tb.Label(foodPage, text=foodNameVar, foreground="white", font=("Helvetica", 24))
+foodTitle.pack()
+foodDesc = tb.Label(foodPage, text=foodDescVar, foreground="white")
+foodDesc.pack()
 
 root.after(1000, show_loading_animation)
 

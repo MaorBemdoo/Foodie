@@ -137,12 +137,12 @@ def toHome():
     root.update_idletasks()
     home.pack()
 
-def seeMore():
-    global foodImg, foodDesc, foodTitle, foodImgVar, foodNameVar, foodDescVar
+def seeMore(foodImgVar, foodDescVar, foodNameVar):
+    global foodImg, foodDesc, foodTitle
     foods_canvas.forget()
     scrollbar.forget()
     foodPage.pack()
-    foodImg.config(image=foodImgVar, width=round(root.winfo_screenwidth()/3) - 50)
+    foodImg.config(image=foodImgVar)
     foodTitle.config(text=foodNameVar)
     foodDesc.config(text=foodDescVar)
 
@@ -167,7 +167,7 @@ async def search():
                         toHomeBtn.grid(row=1, column=2)
                         for i, food in enumerate(res):
                             foodNameVar = food["title"]
-                            foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
+                            foodFrame = tb.Frame(foods, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgVar = await getFoodImg(foodNameVar)
                             foodImg = tb.Label(foodFrame, image=foodImgVar)
                             foodImg.pack()
@@ -178,7 +178,7 @@ async def search():
                             subFoodDescVar = foodDescVar[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescVar, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
-                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=seeMore)
+                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=lambda img=foodImgVar, desc=foodDescVar, name=foodNameVar: seeMore(img, desc, name))
                             button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=(i//3) + 5, column=(i%3), sticky="nsew")
                         home.forget()

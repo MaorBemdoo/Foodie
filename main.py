@@ -145,9 +145,9 @@ def seeMore(foodImgVar, foodDescVar, foodNameVar, foodIngredientsVar):
     foodImg.config(image=foodImgVar)
     foodTitle.config(text=foodNameVar)
     foodDesc.config(text=foodDescVar)
-    for i, ingredient in enumerate(foodIngredientsVar, start=1):
-        foodingredients = tb.Label(ingredientFrame, text=f" {ingredient},")
-        foodingredients.grid(row=0, column=(i//3) + 1)
+    for ingredient in enumerate(foodIngredientsVar, start=1):
+        foodingredients = tb.Label(ingredientFrame, text=ingredient, justify="left")
+        foodingredients.pack(anchor="w", padx=10, pady=5)
 
 
 async def search():
@@ -252,8 +252,8 @@ foodTitle.pack()
 foodDesc = tb.Label(foodPage, foreground="white")
 foodDesc.pack()
 ingredientFrame = tb.Frame(foodPage)
-ingredientLabel = tb.Label(ingredientFrame, text="Ingredients: ", font=("Cascadia Code SemiBold", 18))
-ingredientLabel.grid(row=0, column=0)
+ingredientLabel = tb.Label(ingredientFrame, text="Ingredients", font=("Cascadia Code SemiBold", 18))
+ingredientLabel.pack()
 ingredientFrame.pack()
 
 root.after(1000, show_loading_animation)

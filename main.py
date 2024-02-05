@@ -25,7 +25,7 @@ email = env_vars.get("EMAIL")
 foodNameVar = ""
 foodImgVar = ""
 foodDescVar = ""
-foodStepsVar = ""
+foodIngredientsVar = []
 
 async def getFoodImg(search_query):
     global button, foodImgVar
@@ -137,7 +137,7 @@ def toHome():
     root.update_idletasks()
     home.pack()
 
-def seeMore(foodImgVar, foodDescVar, foodNameVar):
+def seeMore(foodImgVar, foodDescVar, foodNameVar, foodIngredientsVar):
     global foodImg, foodDesc, foodTitle
     foods_canvas.forget()
     scrollbar.forget()
@@ -145,6 +145,9 @@ def seeMore(foodImgVar, foodDescVar, foodNameVar):
     foodImg.config(image=foodImgVar)
     foodTitle.config(text=foodNameVar)
     foodDesc.config(text=foodDescVar)
+    for i, ingredient in enumerate(foodIngredientsVar, start=1):
+        foodingredients = tb.Label(ingredientFrame, text=f" {ingredient},")
+        foodingredients.grid(row=0, column=(i//3) + 1)
 
 
 async def search():
@@ -167,6 +170,7 @@ async def search():
                         toHomeBtn.grid(row=1, column=2)
                         for i, food in enumerate(res):
                             foodNameVar = food["title"]
+                            foodIngredientsVar = food["ingredients"].split(";")
                             foodFrame = tb.Frame(foods, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgVar = await getFoodImg(foodNameVar)
                             foodImg = tb.Label(foodFrame, image=foodImgVar)
@@ -178,7 +182,7 @@ async def search():
                             subFoodDescVar = foodDescVar[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescVar, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
                             subFoodDesc.pack()
-                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=lambda img=foodImgVar, desc=foodDescVar, name=foodNameVar: seeMore(img, desc, name))
+                            button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=lambda img=foodImgVar, desc=foodDescVar, name=foodNameVar, ingredients=foodIngredientsVar: seeMore(img, desc, name, ingredients))
                             button.pack(pady=10)
                             foodFrame.grid(padx=10, pady=10, row=(i//3) + 5, column=(i%3), sticky="nsew")
                         home.forget()
@@ -247,6 +251,10 @@ foodTitle = tb.Label(foodPage, foreground="white", font=("Helvetica", 24))
 foodTitle.pack()
 foodDesc = tb.Label(foodPage, foreground="white")
 foodDesc.pack()
+ingredientFrame = tb.Frame(foodPage)
+ingredientLabel = tb.Label(ingredientFrame, text="Ingredients: ", font=("Cascadia Code SemiBold", 18))
+ingredientLabel.grid(row=0, column=0)
+ingredientFrame.pack()
 
 root.after(1000, show_loading_animation)
 

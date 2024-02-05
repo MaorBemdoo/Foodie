@@ -21,7 +21,6 @@ api_ninjas_api_key = env_vars.get("API_NINJAS_API_KEY")
 wikimedia_api_key = env_vars.get("WIKI_MEDIA_API_KEY")
 pexel_api_key = env_vars.get("PEXEL_API_KEY")
 email = env_vars.get("EMAIL")
-<<<<<<< HEAD
 
 foodNameVar = ""
 foodImgVar = ""
@@ -30,10 +29,6 @@ foodStepsVar = ""
 
 async def getFoodImg(search_query):
     global button, foodImgVar
-=======
-async def getfoodimg(search_query):
-    global button
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
 
     headers = {
         'Authorization': pexel_api_key,
@@ -60,19 +55,11 @@ async def getfoodimg(search_query):
                                     img = img.resize((round(root.winfo_screenwidth()/3) - 50, 350))
                                     foodImgVar = ImageTk.PhotoImage(img)
                                 else:
-<<<<<<< HEAD
-                                    print("Error downloading image:", img_response.status)
-                                    foodImgVar = None
-                        else:
-                            print("No photos found in the response")
-                            foodImgVar = None
-=======
                                     print("Error downloading Photo:", img_response.status)
                                     return None
                         else:
                             print("No Pictures found in the response")
                             return None
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
                     else:
                         print("Invalid JSON response format")
                         foodImgVar = None
@@ -82,19 +69,11 @@ async def getfoodimg(search_query):
                     print("Error parsing JSON:", e)
                     foodImgVar = None
             else:
-<<<<<<< HEAD
-                print("Error:", response.status)
-                foodImgVar = None
-
-async def getFoodDesc(search_query):
-    global button, foodDescVar
-=======
                 print("Not found:", response.status)
                 return None
 
-async def getfooddesc(search_query):
-    global button
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
+async def getFoodDesc(search_query):
+    global button, foodDescVar
 
     language_code = 'en'
     number_of_results = 1
@@ -123,13 +102,8 @@ async def getfooddesc(search_query):
                                 translated_text = translator.translate(soupText, src='auto', dest='en').text
                                 foodDescVar = translated_text
                             except Exception as e:
-<<<<<<< HEAD
-                                print("Error:", e)
-                                foodDescVar = None
-=======
                                 print("Not Found:", e)
                                 return None
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
                         else:
                             return "No excerpt available"
                     else:
@@ -141,12 +115,7 @@ async def getfooddesc(search_query):
                     foodDescVar = "Error parsing JSON"
             else:
                 print("Error:", response.status)
-<<<<<<< HEAD
-                foodDescVar = "Error getting food description"
-
-=======
                 return "Error getting food description"
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
 def show_loading_animation():
     loading_window = tb.Toplevel('root')
     loading_window.title("Loading")
@@ -161,7 +130,7 @@ def show_loading_animation():
     progress_bar.stop()
 
     loading_window.destroy()
-def tohome():
+def toHome():
     foods_canvas.forget()
     scrollbar.forget()
     root.geometry("600x800")
@@ -195,26 +164,15 @@ async def search():
                         for i, food in enumerate(res):
                             foodNameVar = food["title"]
                             foodFrame = tb.Frame(foods, width=300, height=300, relief="sunken", borderwidth=2, bootstyle="light")
-<<<<<<< HEAD
                             await getFoodImg(foodNameVar)
                             foodImg = tb.Label(foodFrame, image=foodImgVar)
-=======
-                            foodImgRes = await getfoodimg(food["title"])
-                            foodImg = tb.Label(foodFrame, image=foodImgRes)
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
                             foodImg.pack()
                             foodImg.image = foodImgVar
                             foodTitle = tb.Label(foodFrame, text=foodNameVar, font=("Helvetica", 20), bootstyle="light, inverse")
                             foodTitle.pack()
-<<<<<<< HEAD
                             await getFoodDesc(foodNameVar)
                             subFoodDescVar = foodDescVar[:42] + "..."
                             subFoodDesc = tb.Label(foodFrame, text=subFoodDescVar, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
-=======
-                            subFoodDescText = await getfooddesc(food["title"])
-                            subFoodDescText = subFoodDescText[:42] + "..."
-                            subFoodDesc = tb.Label(foodFrame, text=subFoodDescText, font=("Helvetica", 12), bootstyle="light, inverse", wraplength=300)
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
                             subFoodDesc.pack()
                             button = tb.Button(foodFrame, text="See more", bootstyle="warning", command=seeMore)
                             button.pack(pady=10)
@@ -278,7 +236,6 @@ errorLabel.pack()
 button = tb.Button(home, text="Search", bootstyle="warning", padding=(40, 10), command=lambda: asyncio.run(search()))
 button.pack(pady=20)
 
-<<<<<<< HEAD
 # food page
 foodImg = tb.Label(foodPage, image=foodImgVar)
 foodImg.pack()
@@ -286,16 +243,6 @@ foodTitle = tb.Label(foodPage, text=foodNameVar, foreground="white", font=("Helv
 foodTitle.pack()
 foodDesc = tb.Label(foodPage, text=foodDescVar, foreground="white")
 foodDesc.pack()
-=======
-# foods page
-# foodFrame = tb.Frame(foods, width=300, height=300)
-# foodTitle = tb.Label(foodFrame, font=(
-#     "Helvetica", 36), bootstyle="warning")
-# foodTitle.pack()
-
-# button = tb.Button(foodFrame, text="Go Back", bootstyle="success", command=toHome)
-# button.pack(pady=10)
->>>>>>> 577359484430c360368c09caa6829b96496cb6cf
 
 root.after(1000, show_loading_animation)
 

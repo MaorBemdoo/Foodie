@@ -19,7 +19,9 @@ The foodie app is a user friendly and efficient desktop application designed to 
 
 ## Encountered Challenges and future Features
 
-- Working on the backend and database, so that users can login to view their progress
+- Could not create a perfect UI
+- The pexel api does not bring a perfect image
+- Use our own api
 
 ## How to install and run the project
 

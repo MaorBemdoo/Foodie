@@ -57,6 +57,7 @@ The foodie app is a user friendly and efficient desktop application designed to 
 
 Give this repo a ⭐ if you like it
 
+
 ## License
 
 This repo is protected by the [MIT](LICENSE) License

@@ -37,21 +37,22 @@ The foodie app is a user friendly and efficient desktop application designed to 
 ```
 - Run the application (Current file)
 
-## Demo
+## APP SHOWCASE
 
 <div align="center">
-    <img src="src/assets/desktopScreenshot.jpg" alt="Desktop Screenshot">
-    <img src="src/assets/questionScreenshot.jpg" alt="Question Screenshot">
+    <img src="assets/R1.JPG" alt="Interface">
+    <img src="assets/R2.JPG" alt="Search result">
+    <img src="assets/R3.JPG" alt="Ingredients">
+    <img src="assets/R4.JPG" alt="Instructions">
+
 </div>
 
-**[Demo Link](https://quizon.vercel.app)**
-
 ## Authors
-
-| <img src="https://github.com/MaorBemdoo.png" width="60px"/> |
-|:--:|
-|Github: [@MaorBemdoo](https://github.com/MaorBemdoo) <br> LinkedIn: [Bemdoo Maor](https://www.linkedin.com/in/bemdoo-maor-449698279/)|
-
+- Maor Bemdoo  -   ------------ BHU/23/04/05/0068
+- Adamu Jighjigh------------- BHU/23/04/09/0080
+- Stephenie Bitram Boyi---- BHU/23/04/09/0074
+- Ibrahim Daniel---------------BHU/23/04/05/0076
+- Elias Esther ----------------- BHU/23/01/07/0044
 ## Support
 
 Give this repo a ⭐ if you like it

@@ -152,7 +152,7 @@ def seeMore(foodImgVar, foodDescVar, foodNameVar, foodIngredientsVar, foodInstru
         foodingredients.pack(anchor="w", padx=10, pady=5)
     instructionLabel.pack()
     for i, instruction in enumerate(foodInstructionsVar, start=1):
-        foodInstruction = tb.Label(instructionFrame, text=f"Step {i}: {instruction}", justify="left", wraplength=400)
+        foodInstruction = tb.Label(instructionFrame, text=f"Step {i}: {instruction}.", justify="left", wraplength=400)
         foodInstruction.pack(anchor="w", padx=10, pady=5)
 
 
@@ -177,7 +177,7 @@ async def search():
                         for i, food in enumerate(res):
                             foodNameVar = food["title"]
                             foodIngredientsVar = food["ingredients"].split("|")
-                            foodInstructionsVar = food["instructions"].split(".")
+                            foodInstructionsVar = food["instructions"].split(". ")
                             foodFrame = tb.Frame(foods, height=300, relief="sunken", borderwidth=2, bootstyle="light")
                             foodImgVar = await getFoodImg(foodNameVar)
                             foodImg = tb.Label(foodFrame, image=foodImgVar)
